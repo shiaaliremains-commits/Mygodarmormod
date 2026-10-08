@@ -25,6 +25,8 @@ class GodArmorWelcomeScreen(private val parent: Screen? = null) : Screen(Compone
         "Feel free to reach out to me directly on Discord:"
     )
 
+    private fun argb(alpha: Int, rgb: Int): Int = (alpha.coerceIn(0, 255) shl 24) or (rgb and 0xFFFFFF)
+
     override fun onClose() {
         if (parent != null) {
             GodarmoranvilClient.openScreen(parent)
@@ -60,13 +62,13 @@ class GodArmorWelcomeScreen(private val parent: Screen? = null) : Screen(Compone
         val cardX = cx - cardW / 2
         val cardY = maxOf(10, cy - cardH / 2)
 
-        // Fade-in tween ناعم وسلس
+        // Fade-in tween ناعم وسلس للوحة
         val progress = (elapsedMs / 400f).coerceIn(0f, 1f)
         val ease = (1f - (1f - progress) * (1f - progress))
         val currentAlpha = (ease * 255).toInt()
 
-        val bgColor = (currentAlpha * 0.92f).toInt().coerceIn(0, 255) shl 24 or 0x0D1424
-        val borderColor = (currentAlpha * 0.85f).toInt().coerceIn(0, 255) shl 24 or 0x2A3E66
+        val bgColor = argb((currentAlpha * 0.94f).toInt(), 0x0D1424)
+        val borderColor = argb((currentAlpha * 0.85f).toInt(), 0x2A3E66)
 
         // رسم كارت العرض وحدود النيون الفخمة
         graphics.fill(cardX, cardY, cardX + cardW, cardY + cardH, bgColor)
@@ -75,11 +77,11 @@ class GodArmorWelcomeScreen(private val parent: Screen? = null) : Screen(Compone
         graphics.fill(cardX, cardY, cardX + 1, cardY + cardH, borderColor)
         graphics.fill(cardX + cardW - 1, cardY, cardX + cardW, cardY + cardH, borderColor)
 
-        // أنيميشن الـ Typewriter لكتابة النص كلمة كلمة بالملي ثانية
+        // أنيميشن الـ Typewriter لكتابة النص كلمة كلمة مع ألوان ARGB صريحة ومضيئة
         val wordSpeedMs = 45L
         var totalWordsAllowed = (elapsedMs / wordSpeedMs).toInt()
 
-        var lineY = cardY + 8
+        var lineY = cardY + 10
         for (line in lines) {
             if (line.isEmpty()) {
                 lineY += 6
@@ -97,13 +99,14 @@ class GodArmorWelcomeScreen(private val parent: Screen? = null) : Screen(Compone
 
             if (visibleWords.isNotEmpty()) {
                 val visibleLine = visibleWords.joinToString(" ")
-                val color = when {
-                    "✦" in visibleLine -> 0xFFE24D.toInt()
-                    "UNLIMITED" in visibleLine || "GOD ARMOR" in visibleLine -> 0x00E5FF.toInt()
-                    "Discord" in visibleLine -> 0xFFA726.toInt()
-                    else -> 0xD0DFEE.toInt()
+                val rgb = when {
+                    "✦" in visibleLine -> 0xFFD700 // ذهبي
+                    "UNLIMITED" in visibleLine || "GOD ARMOR" in visibleLine -> 0x00E5FF // نيون أزرق
+                    "Discord" in visibleLine -> 0xFFA726 // برتقالي دافئ
+                    else -> 0xE0EAF8 // أبيض فضي ناصع
                 }
-                graphics.centeredText(font, Component.literal(visibleLine), cx, lineY, color)
+                val textColor = argb(currentAlpha, rgb)
+                graphics.centeredText(font, Component.literal(visibleLine), cx, lineY, textColor)
             }
 
             lineY += 11
