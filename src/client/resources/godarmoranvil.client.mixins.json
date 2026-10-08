@@ -2,9 +2,7 @@
   "required": true,
   "package": "my.godarmoranvil.client.mixin",
   "compatibilityLevel": "JAVA_21",
-  "client": [
-    "AnvilScreenMixin"
-  ],
+  "client": [],
   "injectors": {
     "defaultRequire": 1
   }
