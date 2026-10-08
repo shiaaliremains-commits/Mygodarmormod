@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "id": "godarmoranvil",
+  "version": "${version}",
+  "name": "GodArmorAnvil",
+  "description": "Removes the 'Too Expensive!' anvil limit and unlocks combining all Protection enchantments on armor to forge legendary God Armor.",
+  "authors": [
+    "shiaaliremains-commits"
+  ],
+  "contact": {
+    "homepage": "https://discord.com",
+    "sources": "https://github.com/shiaaliremains-commits/Mygodarmormod"
+  },
+  "license": "CC0-1.0",
+  "icon": "assets/godarmoranvil/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      {
+        "value": "my.godarmoranvil.Godarmoranvil",
+        "adapter": "kotlin"
+      }
+    ],
+    "client": [
+      {
+        "value": "my.godarmoranvil.client.GodarmoranvilClient",
+        "adapter": "kotlin"
+      }
+    ],
+    "modmenu": [
+      {
+        "value": "my.godarmoranvil.client.GodArmorModMenu",
+        "adapter": "kotlin"
+      }
+    ],
+    "fabric-datagen": [
+      {
+        "value": "my.godarmoranvil.client.GodarmoranvilDataGenerator",
+        "adapter": "kotlin"
+      }
+    ]
+  },
+  "mixins": [
+    "godarmoranvil.mixins.json",
+    {
+      "config": "godarmoranvil.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "~26.3",
+    "java": ">=25",
+    "fabric-api": "*",
+    "fabric-language-kotlin": "*"
+  }
+}
