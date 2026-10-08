@@ -2,7 +2,7 @@ package my.godarmoranvil.client
 
 import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.Component
@@ -13,25 +13,21 @@ class GodArmorWelcomeScreen(private val parent: Screen? = null) : Screen(Compone
     private lateinit var doneBtn: Button
 
     private val lines = listOf(
-        "Welcome to GodArmorAnvil!",
+        "✦ WELCOME TO GOD ARMOR ANVIL ✦",
+        "Break the limits of Minecraft armor forging!",
         "",
-        "✦ UNLIMITED ANVIL POWER:",
-        "• The 'Too Expensive!' repair cap has been completely removed.",
-        "• Combine and repair your gear indefinitely without limits.",
+        "• UNLIMITED ANVIL: The 'Too Expensive!' repair cap is gone forever.",
+        "• GOD ARMOR: Protection, Fire, Blast, and Projectile",
+        "  Protection can now be combined together on the same armor!",
+        "• Weapons & tools retain their original vanilla balance.",
         "",
-        "✦ DIVINE ARMOR COMBINATIONS:",
-        "• Protection, Fire Protection, Blast Protection, and",
-        "  Projectile Protection can now be united on the same armor piece!",
-        "• Forge your invincible God Armor set.",
-        "• Weapon and tool enchantments retain their original balance.",
-        "",
-        "Have questions, found a bug, or want to suggest new features?",
+        "Need help, found an issue, or want to suggest new features?",
         "Feel free to reach out to me directly on Discord:"
     )
 
     override fun onClose() {
         if (parent != null) {
-            minecraft?.setScreen(parent)
+            GodarmoranvilClient.openScreen(parent)
         } else {
             super.onClose()
         }
@@ -40,12 +36,12 @@ class GodArmorWelcomeScreen(private val parent: Screen? = null) : Screen(Compone
     override fun init() {
         val w = 240
         val left = width / 2 - w / 2
-        val bottomY = height - 32
+        val bottomY = height - 34
 
         discordBtn = Button.builder(Component.literal("📋 Copy Discord: l9mm").withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD)) { btn ->
             Minecraft.getInstance().keyboardHandler.clipboard = "l9mm"
             btn.message = Component.literal("✔ Copied: l9mm").withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD)
-        }.bounds(left, bottomY - 26, w, 20).build()
+        }.bounds(left, bottomY - 24, w, 20).build()
         addRenderableWidget(discordBtn)
 
         doneBtn = Button.builder(Component.literal("Back to Menu")) { _ -> onClose() }
@@ -53,46 +49,37 @@ class GodArmorWelcomeScreen(private val parent: Screen? = null) : Screen(Compone
         addRenderableWidget(doneBtn)
     }
 
-    override fun renderBackground(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
-        val elapsed = (System.currentTimeMillis() - startTime) / 1000f
-        val fade = (elapsed * 2f).coerceIn(0f, 1f)
-        val alpha = (fade * 180).toInt()
-        guiGraphics.fill(0, 0, width, height, (alpha shl 24) or 0x0A0E18)
-    }
-
-    override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
-        renderBackground(guiGraphics, mouseX, mouseY, partialTick)
+    override fun extractRenderState(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, delta: Float) {
+        super.extractRenderState(graphics, mouseX, mouseY, delta)
 
         val elapsedMs = System.currentTimeMillis() - startTime
         val cardW = 340
-        val cardH = 210
+        val cardH = 175
         val cx = width / 2
-        val cy = height / 2 - 20
+        val cy = height / 2 - 24
         val cardX = cx - cardW / 2
         val cardY = maxOf(10, cy - cardH / 2)
 
-        // Smooth panel fade & slide tween
-        val progress = (elapsedMs / 450f).coerceIn(0f, 1f)
-        val ease = 1f - (1f - progress) * (1f - progress)
+        // Fade-in tween ناعم وسلس
+        val progress = (elapsedMs / 400f).coerceIn(0f, 1f)
+        val ease = (1f - (1f - progress) * (1f - progress))
         val currentAlpha = (ease * 255).toInt()
 
-        val bgColor = (currentAlpha * 0.9f).toInt().coerceIn(0, 255) shl 24 or 0x101726
-        val borderColor = (currentAlpha * 0.8f).toInt().coerceIn(0, 255) shl 24 or 0x2A3E66
-        guiGraphics.fill(cardX, cardY, cardX + cardW, cardY + cardH, bgColor)
-        guiGraphics.fill(cardX, cardY, cardX + cardW, cardY + 1, borderColor)
-        guiGraphics.fill(cardX, cardY + cardH - 1, cardX + cardW, cardY + cardH, borderColor)
-        guiGraphics.fill(cardX, cardY, cardX + 1, cardY + cardH, borderColor)
-        guiGraphics.fill(cardX + cardW - 1, cardY, cardX + cardW, cardY + cardH, borderColor)
+        val bgColor = (currentAlpha * 0.92f).toInt().coerceIn(0, 255) shl 24 or 0x0D1424
+        val borderColor = (currentAlpha * 0.85f).toInt().coerceIn(0, 255) shl 24 or 0x2A3E66
 
-        val title = Component.literal("✦ GOD ARMOR ANVIL ✦").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)
-        guiGraphics.drawCenteredString(font, title, cx, cardY + 8, 0xFFE24D)
-        guiGraphics.fill(cardX + 16, cardY + 22, cardX + cardW - 16, cardY + 23, 0x444D94FF)
+        // رسم كارت العرض وحدود النيون الفخمة
+        graphics.fill(cardX, cardY, cardX + cardW, cardY + cardH, bgColor)
+        graphics.fill(cardX, cardY, cardX + cardW, cardY + 1, borderColor)
+        graphics.fill(cardX, cardY + cardH - 1, cardX + cardW, cardY + cardH, borderColor)
+        graphics.fill(cardX, cardY, cardX + 1, cardY + cardH, borderColor)
+        graphics.fill(cardX + cardW - 1, cardY, cardX + cardW, cardY + cardH, borderColor)
 
-        // أنيميشن الـ Typewriter لكتابة النص كلمة كلمة
-        val wordSpeedMs = 50L
+        // أنيميشن الـ Typewriter لكتابة النص كلمة كلمة بالملي ثانية
+        val wordSpeedMs = 45L
         var totalWordsAllowed = (elapsedMs / wordSpeedMs).toInt()
 
-        var lineY = cardY + 30
+        var lineY = cardY + 8
         for (line in lines) {
             if (line.isEmpty()) {
                 lineY += 6
@@ -111,17 +98,15 @@ class GodArmorWelcomeScreen(private val parent: Screen? = null) : Screen(Compone
             if (visibleWords.isNotEmpty()) {
                 val visibleLine = visibleWords.joinToString(" ")
                 val color = when {
-                    "✦" in visibleLine -> 0x00E5FF
-                    "•" in visibleLine -> 0xE0EAF8
-                    "Discord" in visibleLine -> 0xFFA726
-                    else -> 0xB0C2DE
+                    "✦" in visibleLine -> 0xFFE24D.toInt()
+                    "UNLIMITED" in visibleLine || "GOD ARMOR" in visibleLine -> 0x00E5FF.toInt()
+                    "Discord" in visibleLine -> 0xFFA726.toInt()
+                    else -> 0xD0DFEE.toInt()
                 }
-                guiGraphics.drawString(font, visibleLine, cardX + 14, lineY, color, true)
+                graphics.centeredText(font, Component.literal(visibleLine), cx, lineY, color)
             }
 
             lineY += 11
         }
-
-        super.render(guiGraphics, mouseX, mouseY, partialTick)
     }
 }
